@@ -31,6 +31,7 @@ Vagrant.configure("2") do |config|
 
   # Install Chef Solo
   config.vm.provision "chef_solo" do |chef|
+    chef.add_recipe "git"
   end
 
   # enable logging in via ssh with a password
