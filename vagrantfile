@@ -1,0 +1,35 @@
+Vagrant.configure("2") do |config|
+  # Ubuntu 14.04 LTS x64 official cloud image
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.box_check_update = false
+
+  # Forward ports
+  config.vm.network "forwarded_port", guest: 80, host: 80 # web app
+
+  # VirtualBox
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "vibrato" # friendly name that shows up in Oracle VM VirtualBox Manager
+    vb.memory = 2048 # memory in megabytes
+    vb.cpus = 4 # cpu cores, can't be more than the host actually has!
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"] # fixes slow dns lookups
+  end
+
+  # install docker
+  config.vm.provision "docker" do |d|
+  end
+
+  # install docker-compose
+  config.vm.provision "shell", inline: <<-EOC
+  test -e /usr/local/bin/docker-compose || \\
+  curl -sSL https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose \\
+    | sudo tee /usr/local/bin/docker-compose > /dev/null
+  sudo chmod +x /usr/local/bin/docker-compose
+  EOC
+
+  # Update
+  config.vm.provision :shell, inline: "apt-get update"
+
+  # enable logging in via ssh with a password
+  config.ssh.username = "vagrant"
+  config.ssh.password = "vagrant"
+end
