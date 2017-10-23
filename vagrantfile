@@ -29,6 +29,10 @@ Vagrant.configure("2") do |config|
   # Update
   config.vm.provision :shell, inline: "apt-get update"
 
+  # Install Chef Solo
+  config.vm.provision "chef_solo" do |chef|
+  end
+
   # enable logging in via ssh with a password
   config.ssh.username = "vagrant"
   config.ssh.password = "vagrant"
